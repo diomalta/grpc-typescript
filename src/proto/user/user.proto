@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package user;
+
+service User {
+  rpc create (UserCreateRequest) returns (UserResponse);
+  rpc update (UserUpdateRequest) returns (UserResponse);
+  rpc findByOne (UserIdRequest) returns (UserResponse);
+  rpc list (Void) returns (UsersResponse);
+}
+
+message Void {}
+
+message UserIdRequest {
+  string id = 1;
+}
+
+message UserCreateRequest {
+  string name = 1;
+  string username = 2;
+  oneof optional_attr {
+    uint32 age = 3;
+  }
+}
+
+message UserResponse {
+  string id = 1;
+  string name = 2;
+  string username = 3;
+  oneof optional_attr {
+    uint32 age = 4;
+    uint64 countPosts = 5;
+  }
+}
+
+message UserUpdate {
+  oneof optional_attr {
+    string name = 1;
+    string username = 2;
+    uint32 age = 3;
+  }
+}
+
+message UserUpdateRequest {
+  string id = 1;
+  UserUpdate userUpdate = 2;
+}
+
+message UsersResponse {
+  repeated UserResponse users = 1;
+}

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package post;
+
+service Post {
+  rpc create (PostCreateRequest) returns (PostResponse);
+  rpc list (Void) returns (PostsResponse);
+}
+
+message Void {}
+
+message PostCreateRequest {
+  string title = 2;
+  string content = 3;
+  string userId = 4;
+}
+
+message PostResponse {
+  string id = 1;
+  string title = 2;
+  string content = 3;
+  string userId = 4;
+}
+
+message PostsResponse {
+  repeated PostResponse posts = 1;
+}

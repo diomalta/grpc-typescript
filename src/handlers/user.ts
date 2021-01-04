@@ -2,18 +2,26 @@ import * as grpc from "grpc";
 
 import * as IUser from "../proto/user/generated/user_pb";
 import { UserService, IUserServer } from "../proto/user/generated/user_grpc_pb";
+import { UserRepository } from "../repositories/user";
 
 class UserHandler implements IUserServer {
+  private userRepository: UserRepository;
+
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
+
   create = (
     call: grpc.ServerUnaryCall<IUser.UserCreateRequest>,
     callback: grpc.sendUnaryData<IUser.UserResponse>
   ): void => {
     const reply: IUser.UserResponse = new IUser.UserResponse();
+    const createdUser = this.userRepository.create(call.request);
 
-    reply.setId("uuid");
-    reply.setName(call.request.getName());
-    reply.setUsername(call.request.getUsername());
-    reply.setAge(call.request.getAge());
+    reply.setId(createdUser.id);
+    reply.setName(createdUser.name);
+    reply.setUsername(createdUser.username);
+    reply.setAge(createdUser.age);
 
     callback(null, reply);
   };

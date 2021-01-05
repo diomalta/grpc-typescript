@@ -12,12 +12,14 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
+    "faker": "^5.1.0",
     "google-protobuf": "^3.14.0",
     "grpc": "^1.24.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
+    "@types/faker": "^5.1.5",
     "@types/google-protobuf": "^3.7.4",
     "@types/node": "^14.14.16",
     "@types/uuid": "^8.3.0",

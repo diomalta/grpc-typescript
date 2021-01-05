@@ -5,6 +5,7 @@ import { v4 as uuid } from "uuid";
 import {
   UserCreateRequest,
   UserResponse,
+  UserUpdate,
   UserUpdateRequest,
 } from "../proto/user/generated/user_pb";
 
@@ -44,15 +45,16 @@ export class UserRepository {
       ...userInputDTO.toObject(),
     };
 
-    this.commit();
-
     UserRepository.users.push(user);
+    this.commit();
 
     return user;
   }
 
   findByOne(id: string) {
-    return UserRepository.users.find((user) => user.id === id);
+    return UserRepository.users.find((user) => {
+      return user.id === id;
+    });
   }
 
   getAll() {
@@ -62,8 +64,8 @@ export class UserRepository {
   update(userInputDTO: UserUpdateRequest) {
     const user = this.findByOne(userInputDTO.getId());
 
-    const filteredData: Partial<UserUpdateRequest.AsObject> = Object.entries(
-      userInputDTO
+    const filteredData = Object.entries(
+      userInputDTO.getUserupdate().toObject()
     ).reduce((acc: { [key: string]: any }, [key, value]) => {
       if (value) {
         acc[key] = value;
@@ -72,15 +74,16 @@ export class UserRepository {
       return acc;
     }, {});
 
-    UserRepository.users = UserRepository.users.filter((u) => u.id === user.id);
+    UserRepository.users = UserRepository.users.filter((u) => u.id !== user.id);
 
     const updateUser: UserResponse.AsObject = {
       ...user,
-      ...filteredData.userupdate,
+      ...filteredData,
     };
 
+    UserRepository.users.push(updateUser);
     this.commit();
 
-    UserRepository.users.push(updateUser);
+    return updateUser;
   }
 }

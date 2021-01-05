@@ -31,12 +31,12 @@ class UserHandler implements IUserServer {
     callback: grpc.sendUnaryData<IUser.UserResponse>
   ) => {
     const reply: IUser.UserResponse = new IUser.UserResponse();
-    const userForUpdate: IUser.UserUpdate = call.request.getUserupdate();
+    const updatedUser = this.userRepository.update(call.request);
 
-    reply.setId("uuid");
-    reply.setName(userForUpdate.getName());
-    reply.setUsername(userForUpdate.getUsername());
-    reply.setAge(userForUpdate.getAge());
+    reply.setId(updatedUser.id);
+    reply.setName(updatedUser.name);
+    reply.setUsername(updatedUser.username);
+    reply.setAge(updatedUser.age);
 
     callback(null, reply);
   };
@@ -46,11 +46,12 @@ class UserHandler implements IUserServer {
     callback: grpc.sendUnaryData<IUser.UserResponse>
   ) => {
     const reply: IUser.UserResponse = new IUser.UserResponse();
+    const findedUser = this.userRepository.findByOne(call.request.getId());
 
-    reply.setId("uuid");
-    reply.setName("call.request.getName()");
-    reply.setUsername("call.request.getUsername()");
-    reply.setAge(0);
+    reply.setId(findedUser.id);
+    reply.setName(findedUser.name);
+    reply.setUsername(findedUser.username);
+    reply.setAge(findedUser.age);
 
     callback(null, reply);
   };
@@ -60,6 +61,18 @@ class UserHandler implements IUserServer {
     callback: grpc.sendUnaryData<IUser.UsersResponse>
   ) => {
     const reply: IUser.UsersResponse = new IUser.UsersResponse();
+    const allUsers = this.userRepository.getAll();
+
+    for (const user of allUsers) {
+      const userResponse: IUser.UserResponse = new IUser.UserResponse();
+
+      userResponse.setId(user.id);
+      userResponse.setName(user.name);
+      userResponse.setUsername(user.username);
+      userResponse.setAge(user.age);
+
+      reply.addUsers(userResponse);
+    }
 
     callback(null, reply);
   };
